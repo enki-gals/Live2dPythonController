@@ -28,6 +28,7 @@ async def main():
             selected_model_id:str = models[0]['modelID']  # Automatically select the first model for example
             await controller.load_model(selected_model_id)
             await controller.move_model(0.1, 0.1, 0, 1)
+            await controller.get_hotkeys()
     await controller.close()
 
 if __name__ == "__main__":

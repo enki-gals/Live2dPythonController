@@ -65,3 +65,21 @@ class VTSModelOperations:
             websocket=websocket,
             payload=move_model_request)
         return move_model_response
+
+    # Requesting list of hotkeys available in current or other VTS model
+    @staticmethod
+    async def get_hotkeys(websocket: websockets.WebSocketClientProtocol,
+                          model_id: str) -> Dict[str, Any]:
+        hotkeys_request:Dict[str, Any] = {
+            "apiName": "VTubeStudioPublicAPI",
+            "apiVersion": "1.0",
+            "requestID": "getHotkeys",
+            "messageType": "HotkeysInCurrentModelRequest",
+            "data": {
+                "modelID": model_id
+            }
+        }
+        hotkeys_response:Dict[str, Any] = await VTubeStudioAPIWebsocketSender.send_request(
+            websocket=websocket,
+            payload=hotkeys_request)
+        return hotkeys_response

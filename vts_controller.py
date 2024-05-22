@@ -21,11 +21,12 @@ class VTSLive2dPythonController:
             self.console.log("[bold red]VTS API URL, Plugin Name, and Plugin Developer are required[/bold red]")
             sys.exit(1)
         
-        self.vts_api_url:str                                        = vts_api_url
-        self.plugin_name:str                                        = plugin_name
-        self.plugin_developer:str                                   = plugin_developer
-        self.plugin_icon_base64encoded:str                          = plugin_icon_base64encoded
-        self.websocket:websockets.BasicAuthWebSocketServerProtocol  = None
+        self.vts_api_url:str                                        = vts_api_url               # VTube Studio API URL
+        self.plugin_name:str                                        = plugin_name               # Plugin Name
+        self.plugin_developer:str                                   = plugin_developer          # Plugin Developer
+        self.plugin_icon_base64encoded:str                          = plugin_icon_base64encoded # Plugin Icon Base64 Encoded
+        self.websocket:websockets.BasicAuthWebSocketServerProtocol  = None                      # Websocket connection to the VTube Studio API
+        self.model_id:str                                           = None                      # Model ID that this controller is handling
 
         self.console.print(f"[bold cyan]VTS API URL: {self.vts_api_url}[/bold cyan]")
         self.console.print(f"[bold cyan]Plugin Name: {self.plugin_name}[/bold cyan]")
@@ -62,6 +63,7 @@ class VTSLive2dPythonController:
     async def load_model(self, model_id:str) -> None:
         response = await VTSModelOperations.load_model(websocket=self.websocket, 
                                                        model_id=model_id)
+        self.model_id = model_id
         self.console.print(f"Load Model Response: {response}")
 
     # Move a model in VTube Studio
@@ -71,4 +73,10 @@ class VTSLive2dPythonController:
                                                        position_y=position_y, 
                                                        rotation=rotation, 
                                                        size=size)
-        self.console.print(f"Move Model Response: {response}")
+        self.console.print(f"Move Model Response: {response}")  
+
+    # Get the hotkeys from VTube Studio
+    async def get_hotkeys(self) -> None:
+        response = await VTSModelOperations.get_hotkeys(websocket=self.websocket,
+                                                         model_id=self.model_id)
+        self.console.print(f"Hotkeys: {response}")
