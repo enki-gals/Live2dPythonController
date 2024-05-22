@@ -1,5 +1,7 @@
 # vts_controller.py
 from rich.console import Console
+from rich import print_json
+import json
 import sys
 import websockets
 from typing import List, Dict, Any
@@ -64,7 +66,7 @@ class VTSLive2dPythonController:
         response = await VTSModelOperations.load_model(websocket=self.websocket, 
                                                        model_id=model_id)
         self.model_id = model_id
-        self.console.print(f"Load Model Response: {response}")
+        print_json(json.dumps(response))
 
     # Move a model in VTube Studio
     async def move_model(self, position_x:float, position_y:float, rotation:float, size:float) -> None:
@@ -76,7 +78,21 @@ class VTSLive2dPythonController:
         self.console.print(f"Move Model Response: {response}")  
 
     # Get the hotkeys from VTube Studio
-    async def get_hotkeys(self) -> None:
-        response = await VTSModelOperations.get_hotkeys(websocket=self.websocket,
-                                                         model_id=self.model_id)
-        self.console.print(f"Hotkeys: {response}")
+    async def get_action_list(self) -> List[Dict[str, str]]:
+        response = await VTSModelOperations.get_action_list(websocket=self.websocket,
+                                                            model_id=self.model_id)
+        return response
+
+    # Requesting activation of a hotkey in VTube Studio (activate action)
+    async def activate_hotkey(self, expression_file_name:str) -> None:
+        response = await VTSModelOperations.activate_hotkey(websocket=self.websocket,
+                                                            expression_file_name=expression_file_name)
+        self.console.log(f"Activating action: {expression_file_name}")
+        self.console.print(f"Trigger Action Response: {response}")
+
+    # Requesting deactivation of a hotkey in VTube Studio (deactivate action)
+    async def deactivate_hotkey(self, expression_file_name:str) -> None:
+        response = await VTSModelOperations.deactivate_hotkey(websocket=self.websocket,
+                                                              expression_file_name=expression_file_name)
+        self.console.log(f"Deactivating action: {expression_file_name}")
+        self.console.print(f"Trigger Action Response: {response}")
